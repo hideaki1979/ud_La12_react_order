@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -37,6 +38,6 @@ class ProductSeeder extends Seeder
             return $product;
         }, $products);
 
-        DB::table('products')->insert($insertProducts);
+        Product::insert($insertProducts);
     }
 }

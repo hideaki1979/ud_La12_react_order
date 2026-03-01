@@ -1,6 +1,10 @@
 import { Head, Link } from "@inertiajs/react";
 import { PlusCircle } from "lucide-react";
 import { create } from "@/actions/App/Http/Controllers/ProductController";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AppLayout from "@/layouts/app-layout";
 
 interface Product {
@@ -30,71 +34,88 @@ export default function Products({ products }: ProductProps) {
             <Head title="商品一覧" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">商品一覧</div>
-                    </div>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>商品一覧</CardTitle>
+                        </CardHeader>
+                    </Card>
                 </div>
 
                 <div className="m-4 max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-2">
-                        {/* 商品登録リンク */}
-                        <div className="mt-4 mb-4 ml-4 flex">
-                            <Link
-                                href={create.url()}
-                                className="px-4 py-2 bg-indigo-500 text-white border rounded-md font-semibold text-xs"
-                            >
-                                <PlusCircle size={16} /> 商品登録
-                            </Link>
-                        </div>
-                        <table className="table-auto border border-gray-400 w-10/12 m-4 text-gray-800">
-                            <thead>
-                                <tr className="bg-gray-100">
-                                    <th className="px-4 py-2 w-12">ID</th>
-                                    <th className="px-4 py-2 w-48">商品</th>
-                                    <th className="px-4 py-2 w-28">コード</th>
-                                    <th className="px-4 py-2 w-28 text-center">価格</th>
-                                    <th className="px-4 py-2 w-28 text-center">税率</th>
-                                    <th className="px-4 py-2"></th>
-                                    <th className="px-4 py-2"></th>
-                                </tr>
-                            </thead>
+                    <Card>
+                        <CardContent>
+                            {/* 商品登録リンク */}
+                            <div className="mb-4 flex">
+                                <Button>
+                                    <Link
+                                        href={create.url()}
+                                    >
+                                        <PlusCircle size={16} /> 商品登録
+                                    </Link>
+                                </Button>
+                            </div>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-12">ID</TableHead>
+                                        <TableHead className="w-48">商品</TableHead>
+                                        <TableHead className="w-28">コード</TableHead>
+                                        <TableHead className="w-28 text-center">価格</TableHead>
+                                        <TableHead className="w-28 text-center">税率</TableHead>
+                                        <TableHead></TableHead>
+                                        <TableHead></TableHead>
+                                    </TableRow>
+                                </TableHeader>
 
-                            <tbody>
-                                {products.data.map((product) => {
-                                    return (
-                                        <tr key={product.id}>
-                                            <td className="border border-gray-400 px-4 py-2 text-center">{product.id}</td>
-                                            <td className="border border-gray-400 px-4 py-2">{product.name}</td>
-                                            <td className="border border-gray-400 px-4 py-2 text-center">{product.code}</td>
-                                            <td className="border border-gray-400 px-4 py-2 text-right">{product.price}</td>
-                                            <td className="border border-gray-400 px-4 py-2 text-right">{product.tax}%</td>
-                                            <td className="border border-gray-400 px-4 py-2 text-center"></td>
-                                            <td className="border border-gray-400 px-4 py-2 text-center"></td>
-                                        </tr>
-                                    )
-                                })}
+                                <TableBody>
+                                    {products.data.map((product) => {
+                                        return (
+                                            <TableRow key={product.id}>
+                                                <TableCell className="text-center">{product.id}</TableCell>
+                                                <TableCell>{product.name}</TableCell>
+                                                <TableCell className="text-center">{product.code}</TableCell>
+                                                <TableCell className="text-right">{product.price}</TableCell>
+                                                <TableCell className="text-right">{product.tax}%</TableCell>
+                                                <TableCell className="text-center"></TableCell>
+                                                <TableCell className="text-center"></TableCell>
+                                            </TableRow>
+                                        )
+                                    })}
 
-                            </tbody>
-                        </table>
-                        {/* ページネーション */}
-                        <div className="flex justify-center my-4">
-                            {products.links.map((link, index) => (
-                                <Link
-                                    key={index}
-                                    href={link.url ?? "#"}
-                                    className={`px-4 py-2 mx-2 border rounded ${link.active
-                                        ? "bg-indigo-500 text-white"
-                                        : "bg-white text-gray-700"
-                                        } ${!link.url ? "opacity-50 cursor-not-allowed" : ""}`
-                                    }
-                                >
-                                    {link.label
-                                        .replace("&laquo;", "«")
-                                        .replace("&raquo;", "»")}
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
+                                </TableBody>
+                            </Table>
+                            {/* ページネーション */}
+                            <Pagination className="my-4">
+                                <PaginationContent>
+
+                                    {products.links.map((link, index) => (
+                                        <PaginationItem key={index}>
+                                            <Button
+                                                variant={link.active ? "default" : "outline"}
+                                                size="sm"
+                                                disabled={!link.url}
+                                                asChild={!!link.url}
+                                            >
+                                                {link.url ? (
+                                                    <Link href={link.url}>
+                                                        {link.label
+                                                            .replace("&laquo;", "«")
+                                                            .replace("&raquo;", "»")}
+                                                    </Link>
+                                                ) : (
+                                                    <span>
+                                                        {link.label
+                                                            .replace("&laquo;", "«")
+                                                            .replace("&raquo;", "»")}
+                                                    </span>
+                                                )}
+                                            </Button>
+                                        </PaginationItem>
+                                    ))}
+                                </PaginationContent>
+                            </Pagination>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </AppLayout>
