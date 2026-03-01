@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $search_str = $request->input('search_str');
+
+        $products = Product::query()
+            ->when($search_str, function ($query, $search) {
+                $escaped_search = str_replace(['%', '_'], ['\\%', '\\_'], $search);
+                $query->where('name', 'LIKE', '%' . $escaped_search . '%');
+            })
+            ->paginate(config('pagination.products_per_page', 10))
+            ->withQueryString();
+
+        return Inertia::render(
+            'Products/Index',
+            ['products' => $products, 'search_str' => $search_str],
+        );
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Product $product)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Product $product)
+    {
+        //
+    }
+}
