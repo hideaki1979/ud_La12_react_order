@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 use function Symfony\Component\Clock\now;
