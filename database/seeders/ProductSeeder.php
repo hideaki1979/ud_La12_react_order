@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+
+use function Symfony\Component\Clock\now;
 
 class ProductSeeder extends Seeder
 {
@@ -30,14 +30,11 @@ class ProductSeeder extends Seeder
             ['name' => 'アンパン', 'code' => 'F002', 'price' => 200, 'tax' => 8],
         ];
 
-        $now = Carbon::now();
-
-        $insertProducts = array_map(function ($product) use ($now) {
-            $product['created_at'] = $now;
-            $product['updated_at'] = $now;
-            return $product;
-        }, $products);
-
-        Product::insert($insertProducts);
+        Product::insert(
+            collect($products)->map(fn($product) => $product + [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->all()
+        );
     }
 }

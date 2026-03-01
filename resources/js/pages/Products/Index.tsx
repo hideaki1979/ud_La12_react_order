@@ -1,4 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
+import { decode } from "html-entities";
 import { PlusCircle } from "lucide-react";
 import { create } from "@/actions/App/Http/Controllers/ProductController";
 import { Button } from "@/components/ui/button";
@@ -46,10 +47,8 @@ export default function Products({ products }: ProductProps) {
                         <CardContent>
                             {/* 商品登録リンク */}
                             <div className="mb-4 flex">
-                                <Button>
-                                    <Link
-                                        href={create.url()}
-                                    >
+                                <Button asChild>
+                                    <Link href={create.url()}>
                                         <PlusCircle size={16} /> 商品登録
                                     </Link>
                                 </Button>
@@ -98,15 +97,11 @@ export default function Products({ products }: ProductProps) {
                                             >
                                                 {link.url ? (
                                                     <Link href={link.url}>
-                                                        {link.label
-                                                            .replace("&laquo;", "«")
-                                                            .replace("&raquo;", "»")}
+                                                        {decode(link.label)}
                                                     </Link>
                                                 ) : (
                                                     <span>
-                                                        {link.label
-                                                            .replace("&laquo;", "«")
-                                                            .replace("&raquo;", "»")}
+                                                        {decode(link.label)}
                                                     </span>
                                                 )}
                                             </Button>
