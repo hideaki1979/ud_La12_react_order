@@ -23,13 +23,13 @@ class ProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:20|min:3',
-            'code' => 'required|string|max:4|min:4',
+            'code' => 'required|string|max:4|min:4|unique:products,code',
             'price' => 'required|integer|max:10000|min:100',
-            'tax' => 'required|integer',
+            'tax' => 'required|integer|in:0,8,10',
         ];
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
             'name' => '名前',
@@ -39,7 +39,7 @@ class ProductRequest extends FormRequest
         ];;
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'name.required' => ':attributeを入力してください。',
@@ -53,6 +53,9 @@ class ProductRequest extends FormRequest
             'price.max' => ':attributeは:max円以下で入力してください。',
             'price.integer' => ':attributeは:数値で入力してください。',
             'tax.required' => ':attributeを入力してください。',
+            'code.unique' => ':attributeはすでに登録されています。',
+            'tax.in'      => ':attributeは0・8・10のいずれかを選択してください。',
+
         ];
     }
 }

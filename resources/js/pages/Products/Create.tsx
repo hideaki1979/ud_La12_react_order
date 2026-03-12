@@ -1,12 +1,12 @@
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Select } from '@radix-ui/react-select';
 import type { SubmitEvent } from 'react';
-import { store } from '@/actions/App/Http/Controllers/ProductController';
+import { create, store } from '@/actions/App/Http/Controllers/ProductController';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { index } from '@/routes/products';
 
@@ -20,27 +20,30 @@ const taxes = [
 interface ProductFormData {
     name: string;
     code: string;
-    price: number;
+    price: number | null;
     tax: number | null;
 }
 
 export default function CreateProduct() {
-    const { data, setData, post, processing, errors, reset } = useForm<ProductFormData>({
+    const { data, setData, submit, processing, errors, reset } = useForm<ProductFormData>({
         name: '',
         code: '',
-        price: 0,
+        price: null,
         tax: null,
     });
 
     const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(store.url(), {
+        submit(store(), {
             onSuccess: () => reset('name', 'code', 'price', 'tax'),
         })
     }
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={[
+            { title: '商品一覧', href: '/products' },
+            { title: '商品登録', href: create.url() },
+        ]}>
             <Head title='商品登録' />
             <div className='py-12'>
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -63,17 +66,17 @@ export default function CreateProduct() {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                     />
-                                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                                    <InputError message={errors.name} />
                                 </div>
                                 <div className='mb-4'>
-                                    <Label htmlFor='name'>コード</Label>
+                                    <Label htmlFor='code'>コード</Label>
                                     <Input
                                         id='code'
                                         className='max-w-xs'
                                         value={data.code}
                                         onChange={(e) => setData('code', e.target.value)}
                                     />
-                                    {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code}</p>}
+                                    <InputError message={errors.code} />
                                 </div>
                                 <div className='mb-4'>
                                     <Label htmlFor='price'>価格</Label>
@@ -81,10 +84,10 @@ export default function CreateProduct() {
                                         id='price'
                                         type='number'
                                         className='max-w-xs'
-                                        value={data.price}
-                                        onChange={(e) => setData('price', Number(e.target.value))}
+                                        value={data.price ?? ''}
+                                        onChange={(e) => setData('price', e.target.value === '' ? null : Number(e.target.value))}
                                     />
-                                    {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                                    <InputError message={errors.price} />
                                 </div>
                                 <div className='mb-4 max-w-50'>
                                     <Label htmlFor='tax'>税率</Label>
@@ -103,7 +106,7 @@ export default function CreateProduct() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.tax && <p className="text-red-500 text-sm mt-1">{errors.tax}</p>}
+                                    <InputError message={errors.tax} />
                                 </div>
 
                                 <div className='flex gap-2'>
