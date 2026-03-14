@@ -87,7 +87,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 - To execute PHP code for debugging, run `php artisan tinker --execute "your code here"` directly.
 - To read configuration values, read the config files directly or run `php artisan config:show [key]`.
 - To inspect routes, run `php artisan route:list` directly.
-- To check environment variables, read the `.env` file directly.
+- To check environment configuration, read only the specific key you need and never expose raw secret values from `.env` in outputs.
 
 ## Reading Browser Logs With the `browser-logs` Tool
 
