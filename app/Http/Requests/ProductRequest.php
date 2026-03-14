@@ -21,9 +21,11 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productId = $this->route('product')?->id;
+
         return [
             'name' => 'required|string|max:20|min:3',
-            'code' => 'required|string|max:4|min:4|unique:products,code',
+            'code' => 'required|string|max:4|min:4|unique:products,code,' . ($productId ?? 'NULL'),
             'price' => 'required|integer|max:10000|min:100',
             'tax' => 'required|integer|in:0,8,10',
         ];
@@ -36,7 +38,7 @@ class ProductRequest extends FormRequest
             'code' => 'コード',
             'price' => '価格',
             'tax' => '税率',
-        ];;
+        ];
     }
 
     public function messages(): array

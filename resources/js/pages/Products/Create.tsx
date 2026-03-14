@@ -41,7 +41,7 @@ export default function CreateProduct() {
 
     return (
         <AppLayout breadcrumbs={[
-            { title: '商品一覧', href: '/products' },
+            { title: '商品一覧', href: index.url() },
             { title: '商品登録', href: create.url() },
         ]}>
             <Head title='商品登録' />
