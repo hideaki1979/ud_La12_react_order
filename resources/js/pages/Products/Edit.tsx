@@ -29,7 +29,7 @@ interface ProductProps {
 }
 
 export default function EditProduct({ product }: ProductProps) {
-    const { data, setData, put, processing, errors } = useForm<Product>({
+    const { data, setData, submit, processing, errors } = useForm<Product>({
         id: product.id,
         name: product.name,
         code: product.code,
@@ -37,9 +37,9 @@ export default function EditProduct({ product }: ProductProps) {
         tax: product.tax,
     });
 
-    const handleSubmit: SubmitEventHandler = (e) => {
+    const handleSubmit: SubmitEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
-        put(update.url(product.id));
+        submit(update(product.id));
     }
 
     return (
