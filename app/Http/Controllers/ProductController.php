@@ -60,24 +60,26 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Product $product): Response
     {
-        //
+        return Inertia::render('Product/Edit', ['product' => $product]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product): RedirectResponse
     {
-        //
+        $product->update($request->validated());
+        return to_route('products.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
-        //
+        $product->delete();
+        return redirect('products');
     }
 }

@@ -1,7 +1,7 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { decode } from "html-entities";
-import { PlusCircle } from "lucide-react";
-import { create } from "@/actions/App/Http/Controllers/ProductController";
+import { Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { create, destroy, edit } from "@/actions/App/Http/Controllers/ProductController";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
@@ -75,12 +75,30 @@ export default function Products({ products }: ProductProps) {
                                                 <TableCell className="text-center">{product.code}</TableCell>
                                                 <TableCell className="text-right">{product.price}</TableCell>
                                                 <TableCell className="text-right">{product.tax}%</TableCell>
-                                                <TableCell className="text-center"></TableCell>
-                                                <TableCell className="text-center"></TableCell>
+                                                <TableCell className="text-center">
+                                                    <Link
+                                                        href={edit.url(product.id)}
+                                                        className="inline-flex items-center justify-center px-4 py-2 bg-yellow-400 text-white border rounded-md text-xs"
+                                                    >
+                                                        <Pencil size={16} />
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            if (confirm(product.name + 'を削除しますか？')) {
+                                                                router.delete(destroy.url(product.id));
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         )
                                     })}
-
                                 </TableBody>
                             </Table>
                             {/* ページネーション */}
