@@ -1,7 +1,9 @@
 import { Head, Link, router } from "@inertiajs/react";
 import { decode } from "html-entities";
 import { Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { create, destroy, edit } from "@/actions/App/Http/Controllers/ProductController";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
@@ -30,6 +32,15 @@ interface ProductProps {
 }
 
 export default function Products({ products }: ProductProps) {
+    const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+
+    const handleDelete = () => {
+        if (productToDelete) {
+            router.delete(destroy.url(productToDelete.id));
+            setProductToDelete(null);
+        }
+    };
+
     return (
         <AppLayout breadcrumbs={[{ title: '商品一覧', href: '/products' }]}>
             <Head title="商品一覧" />
@@ -76,12 +87,11 @@ export default function Products({ products }: ProductProps) {
                                                 <TableCell className="text-right">{product.price}</TableCell>
                                                 <TableCell className="text-right">{product.tax}%</TableCell>
                                                 <TableCell className="text-center">
-                                                    <Link
-                                                        href={edit.url(product.id)}
-                                                        className="inline-flex items-center justify-center px-4 py-2 bg-yellow-400 text-white border rounded-md text-xs"
-                                                    >
-                                                        <Pencil size={16} />
-                                                    </Link>
+                                                    <Button asChild size="sm" variant="outline">
+                                                        <Link href={edit.url(product.id)}>
+                                                            <Pencil size={16} />
+                                                        </Link>
+                                                    </Button>
                                                 </TableCell>
                                                 <TableCell className="text-center">
                                                     <Button
@@ -131,6 +141,27 @@ export default function Products({ products }: ProductProps) {
                     </Card>
                 </div>
             </div>
+
+            {/* 削除確認ダイアログ */}
+            <AlertDialog open={productToDelete !== null} onOpenChange={(open) => !open && setProductToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>削除確認</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            「{productToDelete?.name}を削除しますか？この操作は元に戻せません。」
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleDelete}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            削除
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     )
 }

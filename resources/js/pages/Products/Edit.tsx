@@ -1,6 +1,6 @@
 import { Head, Link, useForm } from "@inertiajs/react";
-import type { SubmitEvent } from "react";
-import { edit, index } from "@/actions/App/Http/Controllers/ProductController";
+import type { SubmitEventHandler } from "react";
+import { edit, index, update } from "@/actions/App/Http/Controllers/ProductController";
 import InputError from "@/components/input-error";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AppLayout from "@/layouts/app-layout";
-import { update } from "@/routes/password";
 
 // 税率オプションの定義
 const taxes = [
@@ -30,7 +29,7 @@ interface ProductProps {
 }
 
 export default function EditProduct({ product }: ProductProps) {
-    const { data, setData, submit, processing, errors, reset } = useForm<Product>({
+    const { data, setData, put, processing, errors } = useForm<Product>({
         id: product.id,
         name: product.name,
         code: product.code,
@@ -38,11 +37,9 @@ export default function EditProduct({ product }: ProductProps) {
         tax: product.tax,
     });
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit: SubmitEventHandler = (e) => {
         e.preventDefault();
-        submit(update(), {
-            onSuccess: () => reset('name', 'code', 'price', 'tax'),
-        })
+        put(update.url(product.id));
     }
 
     return (
@@ -50,12 +47,12 @@ export default function EditProduct({ product }: ProductProps) {
             { title: '商品一覧', href: index.url() },
             { title: '商品編集', href: edit.url(product.id) },
         ]}>
-            <Head title='商品登録' />
+            <Head title='商品編集' />
             <div className='py-12'>
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle>商品登録</CardTitle>
+                            <CardTitle>商品編集</CardTitle>
                         </CardHeader>
                     </Card>
                 </div>
@@ -117,7 +114,7 @@ export default function EditProduct({ product }: ProductProps) {
 
                                 <div className='flex gap-2'>
                                     <Button type='submit' disabled={processing}>
-                                        登録
+                                        更新
                                     </Button>
                                     <Button variant="outline" asChild>
                                         <Link href={index.url()}>

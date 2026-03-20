@@ -62,7 +62,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product): Response
     {
-        return Inertia::render('Product/Edit', ['product' => $product]);
+        return Inertia::render('Products/Edit', ['product' => $product]);
     }
 
     /**
@@ -80,6 +80,6 @@ class ProductController extends Controller
     public function destroy(Product $product): RedirectResponse
     {
         $product->delete();
-        return redirect('products');
+        return to_route('products.index');
     }
 }
