@@ -71,8 +71,8 @@ export default function Products({ products, search_str, successMessage }: Produ
                             {/* 商品名検索 */}
                             <form
                                 action={(formData: FormData) => {
-                                    search_str = formData.get("name") as string;
-                                    router.get("/products", { search_str }, { preserveState: true, replace: true });
+                                    const search = formData.get("name") as string;
+                                    router.get("/products", { search_str: search }, { preserveState: true, replace: true });
                                 }}
                                 className="mb-4 flex gap-2"
                             >
@@ -81,6 +81,7 @@ export default function Products({ products, search_str, successMessage }: Produ
                                     name="name"
                                     placeholder="商品名で検索"
                                     className="max-w-sm"
+                                    defaultValue={search_str}
                                 />
                                 <Button type="submit" variant="outline">検索</Button>
                             </form>

@@ -20,11 +20,6 @@ class CustomerSeeder extends Seeder
             ['name' => 'C商店'],
         ];
 
-        Customer::insert(
-            collect($customers)->map(fn($customer) => $customer + [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ])->all()
-        );
+        Customer::factory()->createMany($customers);
     }
 }

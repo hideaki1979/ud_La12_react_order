@@ -46,7 +46,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request): RedirectResponse
     {
         Product::create($request->validated());
-        return to_route('products.index')->with('success_str', '登録完了しました。');;
+        return to_route('products.index')->with('success_str', '登録完了しました。');
     }
 
     /**

@@ -18,14 +18,8 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'customer_id' => $this->faker->numberBetween($min = 1, $max = 3),
-            'product_id1' => $this->faker->numberBetween($min = 1, $max = 10),
-            'num1' => $this->faker->numberBetween($min = 1, $max = 20),
-            'product_id2' => $this->faker->numberBetween($min = 1, $max = 10),
-            'num2' => $this->faker->numberBetween($min = 1, $max = 20),
-            'product_id3' => $this->faker->numberBetween($min = 1, $max = 10),
-            'num3' => $this->faker->numberBetween($min = 1, $max = 20),
-            'orderday' => date('Y-m-d H:i:s'),
+            'customer_id' => $this->faker->numberBetween(1, 3),
+            'order_day' => date('Y-m-d H:i:s'),
         ];
     }
 }
