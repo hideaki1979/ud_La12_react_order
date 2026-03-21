@@ -19,7 +19,7 @@ class OrderFactory extends Factory
     {
         return [
             'customer_id' => $this->faker->numberBetween(1, 3),
-            'order_day' => date('Y-m-d H:i:s'),
+            'order_day' => $this->faker->dateTime(),
         ];
     }
 }
