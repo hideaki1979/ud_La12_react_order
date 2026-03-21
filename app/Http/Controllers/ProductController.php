@@ -46,7 +46,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request): RedirectResponse
     {
         Product::create($request->validated());
-        return to_route('products.index');
+        return to_route('products.index')->with('success_str', '登録完了しました。');
     }
 
     /**
@@ -71,7 +71,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
         $product->update($request->validated());
-        return to_route('products.index');
+        return to_route('products.index')->with('success_str', '更新完了しました。');
     }
 
     /**

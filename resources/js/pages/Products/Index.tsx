@@ -6,6 +6,7 @@ import { create, destroy, edit } from "@/actions/App/Http/Controllers/ProductCon
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AppLayout from "@/layouts/app-layout";
@@ -29,9 +30,11 @@ interface ProductProps {
         data: Product[];
         links: PaginationLink[];
     }
+    search_str: string;
+    successMessage?: string;
 }
 
-export default function Products({ products }: ProductProps) {
+export default function Products({ products, search_str, successMessage }: ProductProps) {
     const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
     const handleDelete = () => {
@@ -64,6 +67,31 @@ export default function Products({ products }: ProductProps) {
                                     </Link>
                                 </Button>
                             </div>
+
+                            {/* 商品名検索 */}
+                            <form
+                                action={(formData: FormData) => {
+                                    const search = formData.get("name") as string;
+                                    router.get("/products", { search_str: search }, { preserveState: true, replace: true });
+                                }}
+                                className="mb-4 flex gap-2"
+                            >
+                                <Input
+                                    type="text"
+                                    name="name"
+                                    placeholder="商品名で検索"
+                                    className="max-w-sm"
+                                    defaultValue={search_str}
+                                />
+                                <Button type="submit" variant="outline">検索</Button>
+                            </form>
+
+                            {successMessage && (
+                                <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-4 rounded m-4">
+                                    {successMessage}
+                                </div>
+                            )}
+
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -72,8 +100,8 @@ export default function Products({ products }: ProductProps) {
                                         <TableHead className="w-28">コード</TableHead>
                                         <TableHead className="w-28 text-center">価格</TableHead>
                                         <TableHead className="w-28 text-center">税率</TableHead>
-                                        <TableHead></TableHead>
-                                        <TableHead></TableHead>
+                                        <TableHead className="w-28 text-center"></TableHead>
+                                        <TableHead className="w-28 text-center"></TableHead>
                                     </TableRow>
                                 </TableHeader>
 
@@ -84,7 +112,7 @@ export default function Products({ products }: ProductProps) {
                                                 <TableCell className="text-center">{product.id}</TableCell>
                                                 <TableCell>{product.name}</TableCell>
                                                 <TableCell className="text-center">{product.code}</TableCell>
-                                                <TableCell className="text-right">{product.price}</TableCell>
+                                                <TableCell className="text-right">{product.price}円</TableCell>
                                                 <TableCell className="text-right">{product.tax}%</TableCell>
                                                 <TableCell className="text-center">
                                                     <Button asChild size="sm" variant="outline">
@@ -97,11 +125,7 @@ export default function Products({ products }: ProductProps) {
                                                     <Button
                                                         variant="destructive"
                                                         size="sm"
-                                                        onClick={() => {
-                                                            if (confirm(product.name + 'を削除しますか？')) {
-                                                                router.delete(destroy.url(product.id));
-                                                            }
-                                                        }}
+                                                        onClick={() => setProductToDelete(product)}
                                                     >
                                                         <Trash2 size={16} />
                                                     </Button>
@@ -148,7 +172,7 @@ export default function Products({ products }: ProductProps) {
                     <AlertDialogHeader>
                         <AlertDialogTitle>削除確認</AlertDialogTitle>
                         <AlertDialogDescription>
-                            「{productToDelete?.name}を削除しますか？この操作は元に戻せません。」
+                            {productToDelete?.name}を削除しますか？この操作は元に戻せません。
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
