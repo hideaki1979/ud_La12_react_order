@@ -33,8 +33,8 @@ interface OrderProps {
         data: Order[];
         links: PaginationLink[];
     };
-    search_str: string;
-    successMessage: string;
+    search_str: string | null;
+    successMessage?: string;
 }
 
 export default function Orders({ orders, search_str, successMessage }: OrderProps) {
@@ -42,7 +42,7 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
 
     const handleDelete = () => {
         if (orderToDelete) {
-            router.delete('/orders/${orderToDelete.id}');
+            router.delete(`/orders/${orderToDelete.id}`);
             setOrderToDelete(null);
         }
     };
@@ -84,7 +84,7 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                     name="customer_name"
                                     placeholder="顧客名で検索"
                                     className="max-w-sm"
-                                    defaultValue={search_str}
+                                    defaultValue={search_str ?? ""}
                                 />
                                 <Button type="submit" variant="outline">
                                     検索
@@ -109,29 +109,43 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                 </TableHeader>
 
                                 <TableBody>
-                                    {orders.data.map((order) => (
-                                        <TableRow key={order.id}>
-                                            <TableCell className="text-center">{order.id}</TableCell>
-                                            <TableCell>{order.customer.name}</TableCell>
-                                            <TableCell>{order.order_day}</TableCell>
-                                            <TableCell className="text-center">
-                                                <Button asChild size="sm" variant="outline">
-                                                    <Link href={`/orders/${order.id}/edit`}>
-                                                        <Pencil size={16} />
-                                                    </Link>
-                                                </Button>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <Button
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    onClick={() => setOrderToDelete(order)}
-                                                >
-                                                    <Trash2 size={16} />
-                                                </Button>
+                                    {orders.data.length > 0 ? (
+                                        orders.data.map((order) => (
+                                            <TableRow key={order.id}>
+                                                <TableCell className="text-center">{order.id}</TableCell>
+                                                <TableCell>{order.customer.name}</TableCell>
+                                                <TableCell>{order.order_day}</TableCell>
+                                                <TableCell className="text-center">
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        variant="outline"
+                                                        aria-label={`注文ID ${order.id} を編集`}
+                                                    >
+                                                        <Link href={`/orders/${order.id}/edit`}>
+                                                            <Pencil size={16} />
+                                                        </Link>
+                                                    </Button>
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        aria-label={`注文ID ${order.id} を編集`}
+                                                        onClick={() => setOrderToDelete(order)}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} className="h-24 text-center">
+                                                注文が見つかりませんでした。
                                             </TableCell>
                                         </TableRow>
-                                    ))}
+                                    )}
                                 </TableBody>
                             </Table>
 
