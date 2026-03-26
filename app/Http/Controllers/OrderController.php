@@ -2,18 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderIndexRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(OrderIndexRequest $request): Response
     {
-        //
+        $search_str = $request->validated('search_str') ?? '';
+
+        $orders = Order::query()
+            ->with('customer')
+            ->when($search_str, function ($query, $search) {
+                $escaped_search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $query->whereHas('customer', function ($q) use ($escaped_search) {
+                    $q->where('name', 'LIKE', '%' . $escaped_search . '%');
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(config('pagination.orders_per_page', 5))
+            ->withQueryString();
+
+        return Inertia::render(
+            'Orders/Index',
+            ['orders' => $orders, 'search_str' => $search_str],
+        );
     }
 
     /**
