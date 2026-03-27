@@ -15,11 +15,23 @@ interface Customer {
     name: string;
 }
 
+interface Product {
+    id: number;
+    name: string;
+    code: string;
+    price: number;
+    tax: number;
+    pivot: {
+        quantity: number;
+    };
+}
+
 interface Order {
     id: number;
     customer_id: number;
     order_day: string;
     customer: Customer;
+    products: Product[];
 }
 
 interface PaginationLink {
@@ -102,6 +114,7 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                     <TableRow>
                                         <TableHead className="w-12">ID</TableHead>
                                         <TableHead className="w-48">顧客名</TableHead>
+                                        <TableHead>商品情報</TableHead>
                                         <TableHead className="w-36">注文日</TableHead>
                                         <TableHead className="w-28 text-center"></TableHead>
                                         <TableHead className="w-28 text-center"></TableHead>
@@ -114,6 +127,17 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                             <TableRow key={order.id}>
                                                 <TableCell className="text-center">{order.id}</TableCell>
                                                 <TableCell>{order.customer.name}</TableCell>
+                                                <TableCell>
+                                                    <ul className="list-disc list-inside text-sm">
+                                                        {order.products.map((product) => (
+                                                            <li key={product.id}>
+                                                                {product.name} ({product.code})
+                                                                &nbsp;単価: {product.price.toLocaleString()}円
+                                                                &nbsp;× {product.pivot.quantity}個
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </TableCell>
                                                 <TableCell>{order.order_day}</TableCell>
                                                 <TableCell className="text-center">
                                                     <Button
@@ -141,7 +165,7 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="h-24 text-center">
+                                            <TableCell colSpan={6} className="h-24 text-center">
                                                 注文が見つかりませんでした。
                                             </TableCell>
                                         </TableRow>

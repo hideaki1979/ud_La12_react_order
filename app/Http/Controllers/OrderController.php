@@ -20,7 +20,7 @@ class OrderController extends Controller
         $search_str = $request->validated('search_str') ?? '';
 
         $orders = Order::query()
-            ->with('customer')
+            ->with(['customer', 'products'])
             ->when($search_str, function ($query, $search) {
                 $escaped_search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
                 $query->whereHas('customer', function ($q) use ($escaped_search) {
