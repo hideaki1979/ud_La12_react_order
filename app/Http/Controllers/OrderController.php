@@ -18,6 +18,8 @@ class OrderController extends Controller
     public function index(OrderIndexRequest $request): Response
     {
         $search_str = $request->validated('search_str') ?? '';
+        $search_product_name = $request->validated('search_product_name') ?? '';
+        $search_product_code = $request->validated('search_product_code') ?? '';
 
         $orders = Order::query()
             ->with(['customer', 'products'])
@@ -27,13 +29,30 @@ class OrderController extends Controller
                     $q->where('name', 'LIKE', '%' . $escaped_search . '%');
                 });
             })
+            ->when($search_product_name, function ($query, $search) {
+                $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $query->whereHas('products', function ($q) use ($escaped) {
+                    $q->where('name', 'LIKE', '%' . $escaped . '%');
+                });
+            })
+            ->when($search_product_code, function ($query, $search) {
+                $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $query->whereHas('products', function ($q) use ($escaped) {
+                    $q->where('code', 'LIKE', '%' . $escaped . '%');
+                });
+            })
             ->orderBy('id', 'desc')
             ->paginate(config('pagination.orders_per_page', 5))
             ->withQueryString();
 
         return Inertia::render(
             'Orders/Index',
-            ['orders' => $orders, 'search_str' => $search_str],
+            [
+                'orders' => $orders,
+                'search_str' => $search_str,
+                'search_product_name' => $search_product_name,
+                'search_product_code' => $search_product_code,
+            ],
         );
     }
 

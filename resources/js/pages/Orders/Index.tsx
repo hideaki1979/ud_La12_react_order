@@ -46,10 +46,12 @@ interface OrderProps {
         links: PaginationLink[];
     };
     search_str: string | null;
+    search_product_name: string | null;
+    search_product_code: string | null;
     successMessage?: string;
 }
 
-export default function Orders({ orders, search_str, successMessage }: OrderProps) {
+export default function Orders({ orders, search_str, search_product_name, search_product_code, successMessage }: OrderProps) {
     const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
 
     const handleDelete = () => {
@@ -86,17 +88,34 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                             {/* 顧客名検索 */}
                             <form
                                 action={(formData: FormData) => {
-                                    const search = formData.get("customer_name") as string;
-                                    router.get("/orders", { search_str: search }, { preserveState: true, replace: true });
+                                    router.get("/orders", {
+                                        search_str: formData.get("customer_name") as string,
+                                        search_product_name: formData.get("product_name") as string,
+                                        search_product_code: formData.get("product_code") as string,
+                                    }, { preserveState: true, replace: true });
                                 }}
-                                className="mb-4 flex gap-2"
+                                className="mb-4 flex gap-2 items-end"
                             >
                                 <Input
                                     type="text"
                                     name="customer_name"
                                     placeholder="顧客名で検索"
-                                    className="max-w-sm"
+                                    className="max-w-48"
                                     defaultValue={search_str ?? ""}
+                                />
+                                <Input
+                                    type="text"
+                                    name="product_name"
+                                    placeholder="商品名で検索"
+                                    className="max-w-48"
+                                    defaultValue={search_product_name ?? ""}
+                                />
+                                <Input
+                                    type="text"
+                                    name="product_code"
+                                    placeholder="商品コード"
+                                    className="max-w-48"
+                                    defaultValue={search_product_code ?? ""}
                                 />
                                 <Button type="submit" variant="outline">
                                     検索
