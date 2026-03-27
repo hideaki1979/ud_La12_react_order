@@ -153,6 +153,7 @@ export default function Orders({ orders, search_str, search_product_name, search
                                                                 {product.name} ({product.code})
                                                                 &nbsp;単価: {product.price.toLocaleString()}円
                                                                 &nbsp;× {product.pivot.quantity}個
+                                                                &nbsp;（小計： {(product.price * product.pivot.quantity).toLocaleString()}円）
                                                             </li>
                                                         ))}
                                                     </ul>
