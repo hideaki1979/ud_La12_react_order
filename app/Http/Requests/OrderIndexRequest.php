@@ -23,7 +23,9 @@ class OrderIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            ['search_str' => ['nullable', 'string', 'max:255']],
+            'search_str' => ['nullable', 'string', 'max:255'],
+            'search_product_name' => ['nullable', 'string', 'max:255'],
+            'search_product_code' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

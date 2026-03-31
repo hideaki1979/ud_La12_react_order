@@ -15,11 +15,23 @@ interface Customer {
     name: string;
 }
 
+interface Product {
+    id: number;
+    name: string;
+    code: string;
+    price: number;
+    tax: number;
+    pivot: {
+        quantity: number;
+    };
+}
+
 interface Order {
     id: number;
     customer_id: number;
     order_day: string;
     customer: Customer;
+    products: Product[];
 }
 
 interface PaginationLink {
@@ -34,10 +46,12 @@ interface OrderProps {
         links: PaginationLink[];
     };
     search_str: string | null;
+    search_product_name: string | null;
+    search_product_code: string | null;
     successMessage?: string;
 }
 
-export default function Orders({ orders, search_str, successMessage }: OrderProps) {
+export default function Orders({ orders, search_str, search_product_name, search_product_code, successMessage }: OrderProps) {
     const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
 
     const handleDelete = () => {
@@ -74,17 +88,34 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                             {/* 顧客名検索 */}
                             <form
                                 action={(formData: FormData) => {
-                                    const search = formData.get("customer_name") as string;
-                                    router.get("/orders", { search_str: search }, { preserveState: true, replace: true });
+                                    router.get("/orders", {
+                                        search_str: formData.get("customer_name") as string,
+                                        search_product_name: formData.get("product_name") as string,
+                                        search_product_code: formData.get("product_code") as string,
+                                    }, { preserveState: true, replace: true });
                                 }}
-                                className="mb-4 flex gap-2"
+                                className="mb-4 flex gap-2 items-end"
                             >
                                 <Input
                                     type="text"
                                     name="customer_name"
                                     placeholder="顧客名で検索"
-                                    className="max-w-sm"
+                                    className="max-w-48"
                                     defaultValue={search_str ?? ""}
+                                />
+                                <Input
+                                    type="text"
+                                    name="product_name"
+                                    placeholder="商品名で検索"
+                                    className="max-w-48"
+                                    defaultValue={search_product_name ?? ""}
+                                />
+                                <Input
+                                    type="text"
+                                    name="product_code"
+                                    placeholder="商品コード"
+                                    className="max-w-48"
+                                    defaultValue={search_product_code ?? ""}
                                 />
                                 <Button type="submit" variant="outline">
                                     検索
@@ -102,6 +133,7 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                     <TableRow>
                                         <TableHead className="w-12">ID</TableHead>
                                         <TableHead className="w-48">顧客名</TableHead>
+                                        <TableHead>商品情報</TableHead>
                                         <TableHead className="w-36">注文日</TableHead>
                                         <TableHead className="w-28 text-center"></TableHead>
                                         <TableHead className="w-28 text-center"></TableHead>
@@ -114,6 +146,18 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                             <TableRow key={order.id}>
                                                 <TableCell className="text-center">{order.id}</TableCell>
                                                 <TableCell>{order.customer.name}</TableCell>
+                                                <TableCell>
+                                                    <ul className="list-disc list-inside text-sm">
+                                                        {order.products.map((product) => (
+                                                            <li key={product.id} className="flex flex-wrap items-center gap-x-2">
+                                                                <span>{product.name} ({product.code})</span>
+                                                                <span>単価: {product.price.toLocaleString()}円</span>
+                                                                <span>× {product.pivot.quantity}個</span>
+                                                                <span>（小計： {(product.price * product.pivot.quantity).toLocaleString()}円）</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </TableCell>
                                                 <TableCell>{order.order_day}</TableCell>
                                                 <TableCell className="text-center">
                                                     <Button
@@ -141,7 +185,7 @@ export default function Orders({ orders, search_str, successMessage }: OrderProp
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={5} className="h-24 text-center">
+                                            <TableCell colSpan={6} className="h-24 text-center">
                                                 注文が見つかりませんでした。
                                             </TableCell>
                                         </TableRow>
