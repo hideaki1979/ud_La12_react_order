@@ -24,19 +24,19 @@ class OrderController extends Controller
         $orders = Order::query()
             ->with(['customer', 'products'])
             ->when($search_str, function ($query, $search) {
-                $escaped_search = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $escaped_search = $this->escapeLike($search);
                 $query->whereHas('customer', function ($q) use ($escaped_search) {
                     $q->where('name', 'LIKE', '%' . $escaped_search . '%');
                 });
             })
             ->when($search_product_name, function ($query, $search) {
-                $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $escaped = $this->escapeLike($search);
                 $query->whereHas('products', function ($q) use ($escaped) {
                     $q->where('name', 'LIKE', '%' . $escaped . '%');
                 });
             })
             ->when($search_product_code, function ($query, $search) {
-                $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $escaped = $this->escapeLike($search);
                 $query->whereHas('products', function ($q) use ($escaped) {
                     $q->where('code', 'LIKE', '%' . $escaped . '%');
                 });
@@ -102,5 +102,10 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
         //
+    }
+
+    private function escapeLike(string $value): string
+    {
+        return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
     }
 }

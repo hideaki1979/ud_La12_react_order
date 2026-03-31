@@ -149,11 +149,11 @@ export default function Orders({ orders, search_str, search_product_name, search
                                                 <TableCell>
                                                     <ul className="list-disc list-inside text-sm">
                                                         {order.products.map((product) => (
-                                                            <li key={product.id}>
-                                                                {product.name} ({product.code})
-                                                                &nbsp;単価: {product.price.toLocaleString()}円
-                                                                &nbsp;× {product.pivot.quantity}個
-                                                                &nbsp;（小計： {(product.price * product.pivot.quantity).toLocaleString()}円）
+                                                            <li key={product.id} className="flex flex-wrap items-center gap-x-2">
+                                                                <span>{product.name} ({product.code})</span>
+                                                                <span>単価: {product.price.toLocaleString()}円</span>
+                                                                <span>× {product.pivot.quantity}個</span>
+                                                                <span>（小計： {(product.price * product.pivot.quantity).toLocaleString()}円）</span>
                                                             </li>
                                                         ))}
                                                     </ul>
