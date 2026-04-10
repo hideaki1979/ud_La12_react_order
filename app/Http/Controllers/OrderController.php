@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderIndexRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+
+use function Pest\Laravel\session;
 
 class OrderController extends Controller
 {
@@ -52,6 +57,7 @@ class OrderController extends Controller
                 'search_str' => $search_str,
                 'search_product_name' => $search_product_name,
                 'search_product_code' => $search_product_code,
+                'successMessage' => session('successMessage'),
             ],
         );
     }
@@ -61,15 +67,33 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $customers = Customer::all();
+        $products = Product::all();
+
+        return Inertia::render('Orders/Create', [
+            'customers' => $customers,
+            'products' => $products,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderRequest $request)
+    public function store(StoreOrderRequest $request): RedirectResponse
     {
-        //
+        $order = Order::create([
+            'customer_id' => $request->validated('customer_id'),
+            'order_day' => $request->validated('order_day'),
+        ]);
+
+        $productsData = collect($request->validated('products'))->mapWithKeys(function ($product) {
+            return [$product['id'] => ['quantity' => $product['quantity']]];
+        });
+
+        $order->products()->attach($productsData);
+
+        return redirect()->route('orders.index')
+            ->with('successMessage', '注文を登録しました。');
     }
 
     /**
