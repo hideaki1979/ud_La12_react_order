@@ -5,8 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderIndexRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -52,6 +57,7 @@ class OrderController extends Controller
                 'search_str' => $search_str,
                 'search_product_name' => $search_product_name,
                 'search_product_code' => $search_product_code,
+                'successMessage' => session('successMessage'),
             ],
         );
     }
@@ -59,17 +65,41 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
-        //
+        $customers = Customer::all();
+        $products = Product::all();
+
+        return Inertia::render('Orders/Create', [
+            'customers' => $customers,
+            'products' => $products,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderRequest $request)
+    public function store(StoreOrderRequest $request): RedirectResponse
     {
-        //
+        return DB::transaction(function () use ($request) {
+            $order = Order::create([
+                'customer_id' => $request->validated('customer_id'),
+                'order_day' => $request->validated('order_day'),
+            ]);
+
+            $productsData = collect($request->validated('products'))
+                ->reduce(function (array $carry, array $product): array {
+                    $productId = $product['id'];
+                    $carry[$productId]['quantity'] = ($carry[$productId]['quantity'] ?? 0) + $product['quantity'];
+
+                    return $carry;
+                }, []);
+
+            $order->products()->attach($productsData);
+
+            return redirect()->route('orders.index')
+                ->with('successMessage', '注文を登録しました。');
+        });
     }
 
     /**
