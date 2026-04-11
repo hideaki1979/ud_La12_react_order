@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import { PlusCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
 import type { SubmitEvent } from "react";
 import { create, index, store } from "@/actions/App/Http/Controllers/OrderController";
 import InputError from "@/components/input-error";
@@ -41,9 +42,11 @@ interface CreaterOrderProps {
 }
 
 export default function CreateOrder({ customers, products }: CreaterOrderProps) {
-    const localToday = new Date(Date.now() - new Date().getTimezoneOffset() * 60_000)
-        .toISOString()
-        .split("T")[0];
+    const [localToday] = useState(() =>
+        new Date(Date.now() - new Date().getTimezoneOffset() * 60_000)
+            .toISOString()
+            .split("T")[0]
+    );
 
     const { data, setData, submit, processing, errors } = useForm<OrderFormData>({
         customer_id: null,

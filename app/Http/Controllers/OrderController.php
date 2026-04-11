@@ -93,7 +93,7 @@ class OrderController extends Controller
                     $carry[$productId]['quantity'] = ($carry[$productId]['quantity'] ?? 0) + $product['quantity'];
 
                     return $carry;
-                });
+                }, []);
 
             $order->products()->attach($productsData);
 
