@@ -10,10 +10,10 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-
-use function Pest\Laravel\session;
 
 class OrderController extends Controller
 {
@@ -65,7 +65,7 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         $customers = Customer::all();
         $products = Product::all();
@@ -81,19 +81,25 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request): RedirectResponse
     {
-        $order = Order::create([
-            'customer_id' => $request->validated('customer_id'),
-            'order_day' => $request->validated('order_day'),
-        ]);
+        return DB::transaction(function () use ($request) {
+            $order = Order::create([
+                'customer_id' => $request->validated('customer_id'),
+                'order_day' => $request->validated('order_day'),
+            ]);
 
-        $productsData = collect($request->validated('products'))->mapWithKeys(function ($product) {
-            return [$product['id'] => ['quantity' => $product['quantity']]];
+            $productsData = collect($request->validated('products'))
+                ->reduce(function (array $carry, array $product): array {
+                    $productId = $product['id'];
+                    $carry[$productId]['quantity'] = ($carry[$productId]['quantity'] ?? 0) + $product['quantity'];
+
+                    return $carry;
+                });
+
+            $order->products()->attach($productsData);
+
+            return redirect()->route('orders.index')
+                ->with('successMessage', '注文を登録しました。');
         });
-
-        $order->products()->attach($productsData);
-
-        return redirect()->route('orders.index')
-            ->with('successMessage', '注文を登録しました。');
     }
 
     /**

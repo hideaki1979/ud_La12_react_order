@@ -24,6 +24,7 @@ interface Product {
 }
 
 interface ProductRow {
+    rowId: string;
     id: number | null;
     quantity: number | null;
 }
@@ -40,14 +41,18 @@ interface CreaterOrderProps {
 }
 
 export default function CreateOrder({ customers, products }: CreaterOrderProps) {
+    const localToday = new Date(Date.now() - new Date().getTimezoneOffset() * 60_000)
+        .toISOString()
+        .split("T")[0];
+
     const { data, setData, submit, processing, errors } = useForm<OrderFormData>({
         customer_id: null,
-        order_day: new Date().toISOString().split('T')[0],
-        products: [{ id: null, quantity: null }],
+        order_day: localToday,
+        products: [{ rowId: crypto.randomUUID(), id: null, quantity: null }],
     });
 
     const addProductRow = () => {
-        setData('products', [...data.products, { id: null, quantity: null }]);
+        setData('products', [...data.products, { rowId: crypto.randomUUID(), id: null, quantity: null }]);
     };
 
     const removeProductRow = (index: number) => {
@@ -138,7 +143,7 @@ export default function CreateOrder({ customers, products }: CreaterOrderProps) 
                                         {data.products.map((row, idx) => {
                                             const selectProduct = getSelectedProduct(row.id);
                                             return (
-                                                <div key={idx} className="flex items-start gap-3 p-3 border rounded-md">
+                                                <div key={row.rowId} className="flex items-start gap-3 p-3 border rounded-md">
                                                     {/* 商品選択 */}
                                                     <div className="flex-1">
                                                         <Label htmlFor={`product-${idx}`}>商品名</Label>

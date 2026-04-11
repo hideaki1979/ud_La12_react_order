@@ -24,11 +24,11 @@
 
 ### ブラウザログ（参考）
 
-```
+```text
 [vite] server connection lost. Polling for restart...
 ```
 
-```
+```text
 Unhandled Promise Rejection Error Page not found: ./pages/Orders/Create.tsx
 ```
 

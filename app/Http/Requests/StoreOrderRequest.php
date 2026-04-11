@@ -31,7 +31,7 @@ class StoreOrderRequest extends FormRequest
         ];
     }
 
-    public function attributes()
+    public function attributes(): array
     {
         return [
             'customer_id' => '顧客',
@@ -42,7 +42,7 @@ class StoreOrderRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'customer_id.required' => ':attributeを選択してください。',
@@ -50,6 +50,7 @@ class StoreOrderRequest extends FormRequest
             'order_day.required' => ':attributeを入力してください。',
             'order_day.date' => ':attributeは有効な日付を入力してください。',
             'products.required' => ':attributeを1つ以上追加してください。',
+            'products.array' => ':attributeは配列で指定してください。',
             'products.min' => ':attributeを1つ以上追加してください。',
             'products.*.id.required' => ':attributeを選択してください。',
             'products.*.id.exists' => '選択された:attributeは無効です。',
