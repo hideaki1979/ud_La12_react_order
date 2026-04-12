@@ -116,12 +116,12 @@ class OrderController extends Controller
     public function edit(Order $order): Response
     {
         $order->load('products');
-        $customer = Customer::all();
+        $customers = Customer::all();
         $products = Product::all();
 
         return Inertia::render('Order/Edit', [
             'order' => $order,
-            'customer' => $customer,
+            'customers' => $customers,
             'products' => $products,
         ]);
     }
