@@ -63,7 +63,7 @@ export default function EditOrder({ order, customers, products }: EditOrderProps
 
     const { data, setData, submit, processing, errors } = useForm<OrderFormData>({
         customer_id: order.customer_id,
-        order_day: order.order_day,
+        order_day: order.order_day.substring(0, 10),
         products: order.products.map((p) => ({
             rowId: crypto.randomUUID(),
             id: p.id,

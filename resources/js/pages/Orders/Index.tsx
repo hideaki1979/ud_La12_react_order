@@ -1,8 +1,8 @@
 import { Head, Link, router } from "@inertiajs/react";
 import { decode } from "html-entities";
-import { Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { Eye, Pencil, PlusCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { create, destroy, edit, index } from "@/actions/App/Http/Controllers/OrderController";
+import { create, destroy, edit, index, show } from "@/actions/App/Http/Controllers/OrderController";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -138,6 +138,7 @@ export default function Orders({ orders, search_str, search_product_name, search
                                         <TableHead className="w-36">注文日</TableHead>
                                         <TableHead className="w-28 text-center"></TableHead>
                                         <TableHead className="w-28 text-center"></TableHead>
+                                        <TableHead className="w-28 text-center"></TableHead>
                                     </TableRow>
                                 </TableHeader>
 
@@ -182,11 +183,23 @@ export default function Orders({ orders, search_str, search_product_name, search
                                                         <Trash2 size={16} />
                                                     </Button>
                                                 </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Button
+                                                        asChild
+                                                        size="sm"
+                                                        variant="outline"
+                                                        aria-label={`注文ID ${order.id} の詳細`}
+                                                    >
+                                                        <Link href={show.url(order.id)}>
+                                                            <Eye size={16} />
+                                                        </Link>
+                                                    </Button>
+                                                </TableCell>
                                             </TableRow>
                                         ))
                                     ) : (
                                         <TableRow>
-                                            <TableCell colSpan={6} className="h-24 text-center">
+                                            <TableCell colSpan={7} className="h-24 text-center">
                                                 注文が見つかりませんでした。
                                             </TableCell>
                                         </TableRow>
