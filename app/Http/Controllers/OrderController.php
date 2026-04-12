@@ -105,9 +105,13 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
+    public function show(Order $order): Response
     {
-        //
+        $order->load(['customer', 'products']);
+
+        return Inertia::render('Orders/Show', [
+            'order' => $order,
+        ]);
     }
 
     /**
@@ -119,7 +123,7 @@ class OrderController extends Controller
         $customers = Customer::all();
         $products = Product::all();
 
-        return Inertia::render('Order/Edit', [
+        return Inertia::render('Orders/Edit', [
             'order' => $order,
             'customers' => $customers,
             'products' => $products,
