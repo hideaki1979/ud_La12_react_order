@@ -113,25 +113,54 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Order $order)
+    public function edit(Order $order): Response
     {
-        //
+        $order->load('products');
+        $customers = Customer::all();
+        $products = Product::all();
+
+        return Inertia::render('Order/Edit', [
+            'order' => $order,
+            'customers' => $customers,
+            'products' => $products,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateOrderRequest $request, Order $order)
+    public function update(UpdateOrderRequest $request, Order $order): RedirectResponse
     {
-        //
+        return DB::transaction(function () use ($request, $order) {
+            $order->update([
+                'customer_id' => $request->validated('customer_id'),
+                'order_day' => $request->validated('order_day'),
+            ]);
+
+            $productsData = collect($request->validated('products'))
+                ->reduce(function (array $carry, array $product): array {
+                    $productId = $product['id'];
+                    $carry[$productId]['quantity'] = ($carry[$productId]['quantity'] ?? 0) + $product['quantity'];
+
+                    return $carry;
+                }, []);
+
+            $order->products()->sync($productsData);
+
+            return redirect()->route('orders.index')
+                ->with('successMessage', '注文を更新しました。');
+        });
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy(Order $order): RedirectResponse
     {
-        //
+        $order->delete();
+
+        return redirect()->route('orders.index')
+            ->with('successMessage', '注文を削除しました。');
     }
 
     private function escapeLike(string $value): string

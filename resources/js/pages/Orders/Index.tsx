@@ -2,6 +2,7 @@ import { Head, Link, router } from "@inertiajs/react";
 import { decode } from "html-entities";
 import { Pencil, PlusCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { create, destroy, edit, index } from "@/actions/App/Http/Controllers/OrderController";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,13 +57,13 @@ export default function Orders({ orders, search_str, search_product_name, search
 
     const handleDelete = () => {
         if (orderToDelete) {
-            router.delete(`/orders/${orderToDelete.id}`);
+            router.delete(destroy.url(orderToDelete.id));
             setOrderToDelete(null);
         }
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: '注文一覧', href: '/orders' }]}>
+        <AppLayout breadcrumbs={[{ title: '注文一覧', href: index.url() }]}>
             <Head title="注文一覧" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -79,7 +80,7 @@ export default function Orders({ orders, search_str, search_product_name, search
                             {/* 注文登録リンク */}
                             <div className="mb-4 flex">
                                 <Button asChild>
-                                    <Link href="/orders/create">
+                                    <Link href={create.url()}>
                                         <PlusCircle size={16} /> 注文登録
                                     </Link>
                                 </Button>
@@ -88,7 +89,7 @@ export default function Orders({ orders, search_str, search_product_name, search
                             {/* 顧客名検索 */}
                             <form
                                 action={(formData: FormData) => {
-                                    router.get("/orders", {
+                                    router.get(index.url(), {
                                         search_str: formData.get("customer_name") as string,
                                         search_product_name: formData.get("product_name") as string,
                                         search_product_code: formData.get("product_code") as string,
@@ -166,7 +167,7 @@ export default function Orders({ orders, search_str, search_product_name, search
                                                         variant="outline"
                                                         aria-label={`注文ID ${order.id} を編集`}
                                                     >
-                                                        <Link href={`/orders/${order.id}/edit`}>
+                                                        <Link href={edit.url(order.id)}>
                                                             <Pencil size={16} />
                                                         </Link>
                                                     </Button>
