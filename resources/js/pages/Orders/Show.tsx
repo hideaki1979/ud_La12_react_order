@@ -63,10 +63,10 @@ export default function Show({ order }: ShowProps) {
                                 <div>
                                     <p className="text-sm text-muted-foreground">顧客名</p>
                                     <p>{order.customer.name}</p>
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">注文日</p>
-                                        <p>{order.order_day}</p>
-                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">注文日</p>
+                                    <p>{order.order_day}</p>
                                 </div>
                             </div>
 
