@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'customer_id' => $this->faker->numberBetween(1, 3),
+            'customer_id' => Customer::factory(),
             'order_day' => $this->faker->dateTime(),
         ];
     }

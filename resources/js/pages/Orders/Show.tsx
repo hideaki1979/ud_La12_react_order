@@ -1,6 +1,7 @@
 import { Head, Link, } from "@inertiajs/react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileDown } from "lucide-react";
 import { index, show } from "@/actions/App/Http/Controllers/OrderController";
+import OrderPdfController from "@/actions/App/Http/Controllers/OrderPdfController";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -51,8 +52,13 @@ export default function Show({ order }: ShowProps) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>注文詳細 #{order.id}</CardTitle>
+                            <Button asChild>
+                                <a href={OrderPdfController.url(order.id)}>
+                                    <FileDown size={16} /> PDF出力
+                                </a>
+                            </Button>
                         </CardHeader>
                         <CardContent>
                             <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">

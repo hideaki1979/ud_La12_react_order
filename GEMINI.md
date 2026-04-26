@@ -85,9 +85,9 @@ This project has domain-specific skills available. You MUST activate the relevan
 - Use the `database-query` tool when you only need to read from the database.
 - Use the `database-schema` tool to inspect table structure before writing migrations or models.
 - To execute PHP code for debugging, run `php artisan tinker --execute "your code here"` directly.
-- To read configuration values, read the config files directly or run `php artisan config:show [key]`.
+- To read configuration values, read the config files directly or run `php artisan config:show [key]`. Never expose raw secret values from `.env` in outputs.
 - To inspect routes, run `php artisan route:list` directly.
-- To check environment configuration, read only the specific key you need and never expose raw secret values from `.env` in outputs.
+- To check environment variables, prefer `php artisan config:show [key]`. If `.env` must be read directly, never include raw secret values (API keys, passwords, tokens) in any output, log, or commit.
 
 ## Reading Browser Logs With the `browser-logs` Tool
 
