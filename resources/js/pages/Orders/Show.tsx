@@ -52,7 +52,7 @@ export default function Show({ order }: ShowProps) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>注文詳細 #{order.id}</CardTitle>
                             <Button asChild>
                                 <a href={OrderPdfController.url(order.id)}>

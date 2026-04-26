@@ -32,3 +32,11 @@ yarn-error.log
 /.cursor
 /.gemini
 /.serena
+# Dompdf auto-generated font cache
+/storage/fonts/installed-fonts.json
+/storage/fonts/*.afm.json
+/storage/fonts/*.ufm.json
+/storage/fonts/*.ufm
+/storage/fonts/ipaexg_*
+# Keep manually placed source font
+!/storage/fonts/ipaexg.ttf
