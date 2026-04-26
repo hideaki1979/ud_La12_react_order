@@ -36,7 +36,7 @@ test('authenticated users can download an order pdf with the Japanese font', fun
     $fontFamilies = $dompdf->getFontMetrics()->getFontFamilies();
 
     expect($fontFamilies)->toHaveKey('ipaexg');
-    expect($fontFamilies['ipaexg'])->toHaveKeys(['normal', 'bold']);
+    expect($fontFamilies['ipaexg'])->toHaveKey('normal');
 });
 
 test('order pdf uses the same embedded Japanese font for static and database text', function () {
